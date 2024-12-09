@@ -30,78 +30,51 @@ public class GildedRose {
 	
     public static void updateQuality()
     {
-        for (int i = 0; i < items.size(); i++)
-        {
-            if ((!"Aged Brie".equals(items.get(i).getName())) && !"Backstage passes to a TAFKAL80ETC concert".equals(items.get(i).getName())) 
-            {
-                if (items.get(i).getQuality() > 0)
-                {
-                    if (!"Sulfuras, Hand of Ragnaros".equals(items.get(i).getName()))
-                    {
-                        items.get(i).setQuality(items.get(i).getQuality() - 1);
-                    }
-                }
-            }
-            else
-            {
-                if (items.get(i).getQuality() < 50)
-                {
-                    items.get(i).setQuality(items.get(i).getQuality() + 1);
+    	for (int i = 0; i < items.size(); i++) {
+    	    Item item = items.get(i);
 
-                    if ("Backstage passes to a TAFKAL80ETC concert".equals(items.get(i).getName()))
-                    {
-                        if (items.get(i).getSellIn() < 11)
-                        {
-                            if (items.get(i).getQuality() < 50)
-                            {
-                                items.get(i).setQuality(items.get(i).getQuality() + 1);
-                            }
-                        }
+    	    // Skip logic for Sulfuras
+    	    if ("Sulfuras, Hand of Ragnaros".equals(item.getName())) {
+    	        continue;  // Skip the current iteration for Sulfuras
+    	    }
 
-                        if (items.get(i).getSellIn() < 6)
-                        {
-                            if (items.get(i).getQuality() < 50)
-                            {
-                                items.get(i).setQuality(items.get(i).getQuality() + 1);
-                            }
-                        }
-                    }
-                }
-            }
+    	    // Update SellIn for all items except Sulfuras
+    	    item.setSellIn(item.getSellIn() - 1);
 
-            if (!"Sulfuras, Hand of Ragnaros".equals(items.get(i).getName()))
-            {
-                items.get(i).setSellIn(items.get(i).getSellIn() - 1);
-            }
-
-            if (items.get(i).getSellIn() < 0)
-            {
-                if (!"Aged Brie".equals(items.get(i).getName()))
-                {
-                    if (!"Backstage passes to a TAFKAL80ETC concert".equals(items.get(i).getName()))
-                    {
-                        if (items.get(i).getQuality() > 0)
-                        {
-                            if (!"Sulfuras, Hand of Ragnaros".equals(items.get(i).getName()))
-                            {
-                                items.get(i).setQuality(items.get(i).getQuality() - 1);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        items.get(i).setQuality(items.get(i).getQuality() - items.get(i).getQuality());
-                    }
-                }
-                else
-                {
-                    if (items.get(i).getQuality() < 50)
-                    {
-                        items.get(i).setQuality(items.get(i).getQuality() + 1);
-                    }
-                }
-            }
-        }
+    	    // Handle the item based on its name
+    	    if (item.getSellIn() < 0) {
+    	        // Item has passed its sell-by date
+    	        if ("Aged Brie".equals(item.getName())) {
+    	            if (item.getQuality() < 50) {
+    	                item.setQuality(item.getQuality() + 1);  // Aged Brie increases in quality
+    	            }
+    	        } else if ("Backstage passes to a TAFKAL80ETC concert".equals(item.getName())) {
+    	            item.setQuality(0);  // Backstage passes quality drops to 0 after the concert
+    	        } else {
+    	            if (item.getQuality() > 0) {
+    	                item.setQuality(item.getQuality() - 1);  // Decrease quality for regular items
+    	            }
+    	        }
+    	    } else {
+    	        // Item has not passed the sell-by date
+    	        if ("Aged Brie".equals(item.getName())) {
+    	            if (item.getQuality() < 50) {
+    	                item.setQuality(item.getQuality() + 1);  // Aged Brie increases in quality
+    	            }
+    	        } else if ("Backstage passes to a TAFKAL80ETC concert".equals(item.getName())) {
+    	            if (item.getSellIn() <= 10 && item.getQuality() < 50) {
+    	                item.setQuality(item.getQuality() + 1);  // Backstage passes increase by 2 when sell-in <= 10
+    	            }
+    	            if (item.getSellIn() <= 5 && item.getQuality() < 50) {
+    	                item.setQuality(item.getQuality() + 1);  // Backstage passes increase by 3 when sell-in <= 5
+    	            }
+    	        } else {
+    	            if (item.getQuality() > 0) {
+    	                item.setQuality(item.getQuality() - 1);  // Decrease quality for regular items
+    	            }
+    	        }
+    	    }
+    	}
     }
 
     //constructor
